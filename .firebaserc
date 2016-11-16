@@ -1,1 +1,5 @@
-{}
+{
+  "projects": {
+    "fsd": "fir-selfie-demo"
+  }
+}
