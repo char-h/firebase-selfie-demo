@@ -119,7 +119,7 @@
         var dbRef = firebase.database().ref().child('object');
 
         //sync db changes
-        dbRefObject.on('value', snap => console.log(snap.val()));
+        dbRef.on('value', snap => console.log(snap.val()));
 
         //upload file
         storageRef.put(file);
