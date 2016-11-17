@@ -8,11 +8,29 @@
         font-family: Roboto, Arial, sans-serif;
         background: #ECEFF1;
         color: rgba(0,0,0,0.87);
+        display: flex;
+        min-height: 100vh;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+
+      }
+
+      #uploader {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 50%;
+        margin-bottom: 10px;
       }
 
       a {
         color: rgb(3,155,229);
       }
+
+
 
       #message {
         max-width: 400px;
@@ -65,5 +83,56 @@
         <li><a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a></li>
       </ul>
     </div>
+
+    <progress value="0" max="100" id="uploader">0%</progress>
+    <input type="file" value="upload" id="fileButton">
+
+    <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyDUno8-HYsNrZ1EPy-dJFJ2WjspCd0MJ4A",
+        authDomain: "fir-selfie-demo.firebaseapp.com",
+        databaseURL: "https://fir-selfie-demo.firebaseio.com",
+        storageBucket: "",
+        messagingSenderId: "869302799165"
+      };
+      firebase.initializeApp(config);
+
+      //
+      var uploader = document.getElementById('uploader');
+      var fileButton = document.getElementById('fileButton');
+
+      //Listen for file selection
+      fileButton.addEventListener('change', function(e){
+
+        //Get the file
+        var file = e.target.files[0];
+
+        //Create Storage ref
+        var storageRef = firebase.storage().ref('photos/'+file.name);
+        //upload file
+        storageRef.put(file);
+
+        //update prog bar
+        task.on('state_changed',
+
+          function progress(snapshot){
+            var percentage = snapshot.bytesTransferred / snapshot.totalBytes * 100;
+            uploader.value = percentage;
+          }, 
+
+          function error(err){
+
+          },
+
+          function complete(){
+
+          }
+
+          );
+      });
+    </script>
+
   </body>
 </html>
