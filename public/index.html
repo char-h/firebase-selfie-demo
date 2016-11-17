@@ -90,14 +90,16 @@
     <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
     <script>
       // Initialize Firebase
-      var config = {
-        apiKey: "AIzaSyDUno8-HYsNrZ1EPy-dJFJ2WjspCd0MJ4A",
-        authDomain: "fir-selfie-demo.firebaseapp.com",
-        databaseURL: "https://fir-selfie-demo.firebaseio.com",
-        storageBucket: "",
-        messagingSenderId: "869302799165"
-      };
-      firebase.initializeApp(config);
+      // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyDUno8-HYsNrZ1EPy-dJFJ2WjspCd0MJ4A",
+      authDomain: "fir-selfie-demo.firebaseapp.com",
+      databaseURL: "https://fir-selfie-demo.firebaseio.com",
+      storageBucket: "fir-selfie-demo.appspot.com",
+      messagingSenderId: "869302799165"
+    };
+    firebase.initializeApp(config);
+
 
       //
       var uploader = document.getElementById('uploader');
