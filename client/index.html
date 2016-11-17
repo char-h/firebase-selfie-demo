@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Welcome to Firebase Hosting</title>
+    <style media="screen">
+      body {
+        font-family: Roboto, Arial, sans-serif;
+        background: #ECEFF1;
+        color: rgba(0,0,0,0.87);
+        display: flex;
+        min-height: 100vh;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+
+      }
+
+      #uploader {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 50%;
+        margin-bottom: 10px;
+      }
+
+      a {
+        color: rgb(3,155,229);
+      }
+    </style>
+  </head>
+  <body>
+    
+    <pre id="object"></pre>
+
+    <progress value="0" max="100" id="uploader">0%</progress>
+    <input type="file" value="upload" id="fileButton">
+    <img src="gs://fir-selfie-demo.appspot.com/photos/13417408_10206243992967431_1563397483942092848_n.jpg" alt="" id="imageHolder" />
+
+    <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyDUno8-HYsNrZ1EPy-dJFJ2WjspCd0MJ4A",
+      authDomain: "fir-selfie-demo.firebaseapp.com",
+      databaseURL: "https://fir-selfie-demo.firebaseio.com",
+      storageBucket: "fir-selfie-demo.appspot.com",
+      messagingSenderId: "869302799165"
+    };
+
+    firebase.initializeApp(config);
+
+    const preObject = document.getElementById("object");
+
+      //
+      var uploader = document.getElementById('uploader');
+      var fileButton = document.getElementById('fileButton');
+      var imageHolder = document.getElementById('imageHolder');
+
+      //Create DB Ref
+      var dbRef = firebase.database().ref().child('object');
+      var dbRefList = firebase.database().ref().child('photos');
+
+      dbRefList.on('child_added', snap => {
+        var x = document.createElement("IMG");
+        var obj = snap.val();
+        var storageRef = firebase.storage().ref();
+        // console.log("snap valueeee child added " + obj[Object.keys(obj)[0]]);
+        var imgRef = storageRef.child(obj[Object.keys(obj)[0]]);
+        imgRef.getDownloadURL().then(function(url) {
+          // Insert url into an <img> tag to "download"
+          x.src = url;        
+          console.log(url);
+
+        }).catch(function(error) {});
+      });
+
+      function addNewPhoto(fileName,fileLoc){
+        var foo = {}; 
+        var ref = 'photos/'+fileName;
+        foo[fileName] = fileLoc;
+        // var newPhoto = firebase.database().ref("photos").push();
+        // newPost.set(foo);
+
+        firebase.database().ref(ref).set(foo);
+      }
+      
+      var storageRef = firebase.storage().ref();
+      var imgRef = storageRef.child('photos/13417408_10206243992967431_1563397483942092848_n.jpg');
+      imgRef.getDownloadURL().then(function(url) {
+        // Insert url into an <img> tag to "download"
+        imageHolder.src = url;        
+        console.log(url);
+
+      }).catch(function(error) {
+        switch (error.code) {
+          case 'storage/object_not_found':
+            // File doesn't exist
+            console.log("File doesn't exist");
+            break;
+
+          case 'storage/unauthorized':
+            // User doesn't have permission to access the object
+            console.log("User doesn't have permission to access the object");
+            break;
+
+          case 'storage/canceled':
+            // User canceled the upload
+            console.log("User canceled the upload");
+            break;
+
+          case 'storage/unknown':
+            // Unknown error occurred, inspect the server response
+            break;
+        }
+      });
+
+
+      //sync db changes
+      dbRef.on('value', snap => {
+        console.log(snap.val());
+        preObject.innerText = JSON.stringify(snap.val(), null, 3);
+      });
+
+      //Listen for file selection
+      fileButton.addEventListener('change', function(e){
+
+        //Get the file
+        var file = e.target.files[0];
+        //file location in storage        
+        var fileName = file.name.split('.');
+        var fileLoc = "photos/" + file.name;
+
+        //Create Storage ref
+        storageRef = firebase.storage().ref(fileLoc);
+
+        //upload file
+        storageRef.put(file);
+        //put file location to db
+        addNewPhoto(fileName[0],fileLoc);
+
+        //update prog bar
+        task.on('state_changed',
+
+          function progress(snapshot){
+            var percentage = snapshot.bytesTransferred / snapshot.totalBytes * 100;
+            uploader.value = percentage;
+          }, 
+
+          function error(err){
+
+          },
+
+          function complete(){
+
+          }
+
+          );
+      });
+    </script>
+  </body>
+</html>
