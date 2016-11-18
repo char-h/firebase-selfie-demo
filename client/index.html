@@ -33,11 +33,11 @@
   </head>
   <body>
     
-    <pre id="object"></pre>
+    <!-- <pre id="object"></pre> -->
 
     <progress value="0" max="100" id="uploader">0%</progress>
     <input type="file" value="upload" id="fileButton">
-    <img src="gs://fir-selfie-demo.appspot.com/photos/13417408_10206243992967431_1563397483942092848_n.jpg" alt="" id="imageHolder" />
+    <!-- <img src="gs://fir-selfie-demo.appspot.com/photos/13417408_10206243992967431_1563397483942092848_n.jpg" alt="" id="imageHolder" /> -->
 
     <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
     <script>
@@ -52,7 +52,7 @@
 
     firebase.initializeApp(config);
 
-    const preObject = document.getElementById("object");
+    // const preObject = document.getElementById("object");
 
       //
       var uploader = document.getElementById('uploader');
@@ -64,27 +64,41 @@
       var dbRefList = firebase.database().ref().child('photos');
 
       dbRefList.on('child_added', snap => {
-        var x = document.createElement("IMG");
+        var x = document.createElement("img");
         var obj = snap.val();
         var storageRef = firebase.storage().ref();
-        // console.log("snap valueeee child added " + obj[Object.keys(obj)[0]]);
-        var imgRef = storageRef.child(obj[Object.keys(obj)[0]]);
+        console.log("snap valueeee child added " + JSON.stringify(snap.val()));
+        var imgRef = storageRef.child(obj);
         imgRef.getDownloadURL().then(function(url) {
           // Insert url into an <img> tag to "download"
           x.src = url;        
-          console.log(url);
+          // document.getElementById('gallery').appendChild(x);  
+          console.log("child_added " + url);
 
         }).catch(function(error) {});
       });
 
       function addNewPhoto(fileName,fileLoc){
-        var foo = {}; 
-        var ref = 'photos/'+fileName;
-        foo[fileName] = fileLoc;
-        // var newPhoto = firebase.database().ref("photos").push();
-        // newPost.set(foo);
+        var newPhoto = dbRefList.push();
+        newPhoto.set(fileLoc);
 
-        firebase.database().ref(ref).set(foo);
+        addNewPhotoTag(fileLoc);
+        // firebase.database().ref(ref).set(foo);
+      }
+
+      function addNewPhotoTag(fileLoc){
+        var x = document.createElement("img");
+        var storageRef = firebase.storage().ref();
+
+        var imgRef = storageRef.child(fileLoc);
+        imgRef.getDownloadURL().then(function(url) {
+          // Insert url into an <img> tag to "download"
+          x.src = url;    
+          // document.getElementById('gallery').appendChild(x);    
+          console.log("child_added " + url);
+
+        }).catch(function(error) {});
+
       }
       
       var storageRef = firebase.storage().ref();
@@ -121,7 +135,7 @@
       //sync db changes
       dbRef.on('value', snap => {
         console.log(snap.val());
-        preObject.innerText = JSON.stringify(snap.val(), null, 3);
+        // preObject.innerText = JSON.stringify(snap.val(), null, 3);
       });
 
       //Listen for file selection

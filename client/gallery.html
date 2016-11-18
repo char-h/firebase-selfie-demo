@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Welcome to Firebase Gallery</title>
+    <style media="screen">
+      body {
+        font-family: Roboto, Arial, sans-serif;
+        background: #ECEFF1;
+        color: rgba(0,0,0,0.87);
+        display: flex;
+        min-height: 100vh;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+
+      }
+
+      #uploader {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 50%;
+        margin-bottom: 10px;
+      }
+
+      a {
+        color: rgb(3,155,229);
+      }
+    </style>
+  </head>
+  <body>
+   	
+	<div id="gallery"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyDUno8-HYsNrZ1EPy-dJFJ2WjspCd0MJ4A",
+      authDomain: "fir-selfie-demo.firebaseapp.com",
+      databaseURL: "https://fir-selfie-demo.firebaseio.com",
+      storageBucket: "fir-selfie-demo.appspot.com",
+      messagingSenderId: "869302799165"
+    };
+
+    firebase.initializeApp(config);
+
+      //Create DB Ref
+      var dbRefList = firebase.database().ref().child('photos');
+
+      dbRefList.on('value', snap => {
+      	console.log(JSON.stringify(snap.val()));
+      });
+
+      dbRefList.on('child_added', snap => {
+      	console.log(snap.val());
+        var x = document.createElement("img");
+        x.height = 500;
+        x.width = 500;
+        var obj = snap.val();
+        var storageRef = firebase.storage().ref();
+        // console.log("snap valueeee child added " + JSON.stringify(snap.val()));
+        var imgRef = storageRef.child(obj);
+        imgRef.getDownloadURL().then(function(url) {
+          // Insert url into an <img> tag
+          x.src = url;         
+          console.log("child_added " + url);
+          document.getElementById('gallery').appendChild(x); 
+
+        }).catch(function(error) {});
+      });
+
+      function addNewPhotoTag(fileLoc){
+        var x = document.createElement("img");
+        var storageRef = firebase.storage().ref();
+
+        var imgRef = storageRef.child(fileLoc);
+        imgRef.getDownloadURL().then(function(url) {
+          // Insert url into an <img> tag to "download"
+          x.src = url;    
+          document.getElementById('gallery').appendChild(x);    
+          console.log("child_added " + url);
+
+        }).catch(function(error) {});
+
+      }
+    </script>
+  </body>
+</html>

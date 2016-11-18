@@ -6,8 +6,12 @@
     "public": "client",
     "rewrites": [
       {
-        "source": "**",
+        "source": "index",
         "destination": "/index.html"
+      },
+      {
+        "source" : "gallery",
+        "destination" : "/gallery.html"
       }
     ]
   }

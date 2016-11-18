@@ -1,7 +1,17 @@
 import React from 'react';
 import { Jumbotron } from 'react-bootstrap';
 import { DataFromPresta } from '../components/prestashop-fetch-data';
+import * as firebase from 'firebase';
 // import { OpenCamera } from '../components/open-camera';
+var config = {
+	apiKey: "AIzaSyDUno8-HYsNrZ1EPy-dJFJ2WjspCd0MJ4A",
+    authDomain: "fir-selfie-demo.firebaseapp.com",
+    databaseURL: "https://fir-selfie-demo.firebaseio.com",
+    storageBucket: "fir-selfie-demo.appspot.com",
+    messagingSenderId: "869302799165"
+};
+
+firebase.initializeApp(config);
 
 export const Index = () => (
     <Jumbotron className="text-center">

@@ -10,6 +10,7 @@
     "bcrypt": "^0.8.7",
     "bootstrap": "^3.3.7",
     "eslint-plugin-import": "^1.15.0",
+    "firebase": "^3.6.1",
     "jquery": "^2.2.4",
     "jquery-validation": "^1.15.1",
     "meteor-node-stubs": "~0.2.0",
